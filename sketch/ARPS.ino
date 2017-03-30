@@ -19,19 +19,24 @@ void printConsole(void)
   long alt;
   char buffer[255];
   char *comment = "Comment";
+  char gpslat[8], gpslong[9];
+  
   if (nmea.getAltitude(alt))
     alt = (int)(meters_to_feet(alt / 1000) + 0.5);
   else
     alt = 0;
 
-  snprintf(buffer, sizeof(buffer),"%d%d%dh%.7s%c/%.8s%c%s%03d/%03d/A=%06ld ", 
+  snprintf(gpslat, 8, "%s", nmea.getMinLatitude());
+  snprintf(gpslong, 9, "%s", nmea.getMinLongitude());
+
+  snprintf(buffer, sizeof(buffer),"%d%d%dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
       int(nmea.getDay()), 
       int(nmea.getHour()), 
       int(nmea.getMinute()), 
-      nmea.getMinLatitude(),
-      nmea.getDirLat(), 
-      nmea.getMinLongitude(), 
-      nmea.getDirLong(), 
+      gpslat,
+      nmea.getDirLat(),
+      gpslong,
+      nmea.getDirLong(),
       "s", 
       (int)((nmea.getCourse() / 1000.) + .5), 
       (int)((nmea.getSpeed() / 1000.) + .5), 
