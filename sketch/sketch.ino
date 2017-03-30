@@ -13,21 +13,12 @@ char nmeaBuffer[200];
 MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 
 Timer t;
-bool ledState = LOW;
 volatile bool ppsTriggered = false;
-
-void printUnknownSentence(MicroNMEA& nmea)
-{
-//  console.println();
-//  console.print("Unknown sentence: ");
-//  console.println(nmea.getSentence());
-}
 
 void ppsHandler(void)
 {
   ppsTriggered = true;
 }
-
 
 void gpsHardwareReset()
 {
@@ -57,17 +48,13 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  Serial.setDebugOutput(true);
-
   Serial.println("Goodnight moon!");
 
   // set the data rate for the SoftwareSerial port
   gps.begin(9600);
 
-  nmea.setUnknownSentenceHandler(printUnknownSentence);
-
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, ledState);
+  digitalWrite(LED_BUILTIN, nmea.isValid());
 
   console.println("Resetting GPS module ...");
   gpsHardwareReset();
@@ -82,16 +69,16 @@ void setup() {
   // adjust precision of time and position fields
   MicroNMEA::sendSentence(gps, "$PNVGNME,2,9,1");
   // MicroNMEA::sendSentence(gps, "$PONME,2,4,1,0");
-  t.every(5000, ppsHandler);
+  
+  // Trigger a GPS update every Second
+  t.every(1000, ppsHandler);
+
+  // Print to the Console every 5 seconds
+  t.every(5000, printConsole);
 }
 
-void loop(void)
+void printConsole(void)
 {
-  if (ppsTriggered) {
-    ppsTriggered = false;
-    ledState = !ledState;
-    digitalWrite(LED_BUILTIN, ledState);
-
     // Output GPS information from previous second
     console.print("Valid fix: ");
     console.println(nmea.isValid() ? "yes" : "no");
@@ -140,12 +127,14 @@ void loop(void)
     console.println(nmea.getSpeed() / 1000., 3);
     console.print("Course: ");
     console.println(nmea.getCourse() / 1000., 3);
-
-#ifdef MEMORY_FREE_H
-    console.print("freeMemory()=");
-    console.println(freeMemory());
-#endif
     console.println("-----------------------");    
+}
+
+void loop(void)
+{
+  if (ppsTriggered) {
+    ppsTriggered = false;
+    digitalWrite(LED_BUILTIN, nmea.isValid());
     nmea.clear();
   }
 
