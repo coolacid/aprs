@@ -24,7 +24,7 @@ void printConsole(void)
   else
     alt = 0;
 
-  snprintf(buffer, sizeof(buffer),"%d%d%dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
+  snprintf(buffer, sizeof(buffer),"%d%d%dh%.7s%c/%.8s%c%s%03d/%03d/A=%06ld ", 
       int(nmea.getDay()), 
       int(nmea.getHour()), 
       int(nmea.getMinute()), 
