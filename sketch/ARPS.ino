@@ -29,7 +29,7 @@ void printConsole(void)
   snprintf(gpslat, 8, "%s", nmea.getMinLatitude());
   snprintf(gpslong, 9, "%s", nmea.getMinLongitude());
 
-  snprintf(buffer, sizeof(buffer),"%d%d%dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
+  snprintf(buffer, sizeof(buffer),"/%02d%02d%02dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
       int(nmea.getDay()), 
       int(nmea.getHour()), 
       int(nmea.getMinute()), 
