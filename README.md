@@ -19,3 +19,12 @@ ESP12E Pinouts:
 - D2 - GPS TX
 - D3 - GPS RX
 
+# AX25/AFSK Libraries
+
+Current issue is getting AFSK working on the ESP8266 (ESP12E). This is a list of Libraries implementing this, however none work with the ESP.
+- https://github.com/kronenpj/AX25 - AVR specific code ( Forked from: https://github.com/slepp/ax25 )
+- https://github.com/trackuino/trackuino - AVR and PIC32 specific code
+
+Ones that use a specific modem board:
+- https://github.com/kicksat/ax25 ( HopeRF Board)
+- https://github.com/markqvist/MicroModem ( Micromodem )

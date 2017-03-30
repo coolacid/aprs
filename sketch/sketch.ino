@@ -2,15 +2,13 @@
 #include <MicroNMEA.h>
 #include <Ticker.h>
 
-
 // Libraries
 // https://github.com/stevemarple/MicroNMEA
-// https://github.com/JChristensen/Timer
 
 SoftwareSerial gps(D2, D3); // RX, TX
 HardwareSerial& console = Serial;
 
-char nmeaBuffer[200];
+char nmeaBuffer[100];
 MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 
 Ticker tConsole;
