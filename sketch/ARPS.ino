@@ -20,11 +20,11 @@ void printConsole(void)
   char buffer[255];
   char *comment = "Comment";
   if (nmea.getAltitude(alt))
-    alt = meters_to_feet(alt / 1000.);
+    alt = (int)(meters_to_feet(alt / 1000) + 0.5);
   else
     alt = 0;
 
-  snprintf(buffer, sizeof(buffer),"%d%d%dh%s%c/%s%c%s%03d/%03d/A=%06ld ", 
+  snprintf(buffer, sizeof(buffer),"%d%d%dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
       int(nmea.getDay()), 
       int(nmea.getHour()), 
       int(nmea.getMinute()), 
@@ -33,8 +33,8 @@ void printConsole(void)
       nmea.getMinLongitude(), 
       nmea.getDirLong(), 
       "s", 
-      nmea.getCourse() / 1000., 
-      nmea.getSpeed() / 1000., 
+      (int)((nmea.getCourse() / 1000.) + .5), 
+      (int)((nmea.getSpeed() / 1000.) + .5), 
       alt,
       comment
       );
