@@ -11,7 +11,8 @@ HardwareSerial& console = Serial;
 char nmeaBuffer[100];
 MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 
-Ticker tConsole;
+Ticker tPrintConsole;
+Ticker tPrintNEMA;
 Ticker tGPSUpdate;
 
 volatile bool ppsTriggered = false;
@@ -73,10 +74,11 @@ void setup() {
   // MicroNMEA::sendSentence(gps, "$PONME,2,4,1,0");
   
   // Trigger a GPS update every Second
-  tConsole.attach(1, ppsHandler);
+  tGPSUpdate.attach(1, ppsHandler);
 
   // Print to the Console every 5 seconds
-  tGPSUpdate.attach(5, printConsole);
+  tPrintConsole.attach(5, printConsole);
+  tPrintNEMA.attach(5, printNEMA);
 
   // TODO: Print to web clients every X seconds
   
@@ -87,7 +89,6 @@ void loop(void)
   if (ppsTriggered) {
     ppsTriggered = false;
     digitalWrite(LED_BUILTIN, nmea.isValid());
-    nmea.clear();
   }
 
   while (!ppsTriggered && gps.available()) {

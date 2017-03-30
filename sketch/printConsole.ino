@@ -1,4 +1,4 @@
-void printConsole(void)
+void printNEMA(void)
 {
     // Output GPS information from previous second
     console.print("Valid fix: ");
@@ -36,6 +36,13 @@ void printConsole(void)
 
     console.print("Longitude (deg): ");
     console.println(longitude_mdeg / 1000000., 6);
+
+    console.print("Latitude: ");
+    console.print(nmea.getMinLatitude());
+    console.println(nmea.getDirLat());
+    console.print("Longitude: ");
+    console.print(nmea.getMinLongitude());
+    console.println(nmea.getDirLong());
 
     long alt;
     console.print("Altitude (m): ");
