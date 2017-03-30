@@ -1,6 +1,7 @@
 #include <SoftwareSerial.h>
 #include <MicroNMEA.h>
-#include <Timer.h>
+#include <Ticker.h>
+
 
 // Libraries
 // https://github.com/stevemarple/MicroNMEA
@@ -12,7 +13,9 @@ HardwareSerial& console = Serial;
 char nmeaBuffer[200];
 MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 
-Timer t;
+Ticker tConsole;
+Ticker tGPSUpdate;
+
 volatile bool ppsTriggered = false;
 
 void ppsHandler(void)
@@ -59,22 +62,26 @@ void setup() {
   console.println("Resetting GPS module ...");
   gpsHardwareReset();
   console.println("... done");
+  // TODO: None of these appear to work, need to read the manual and set up our GPS receiver
   // Clear the list of messages which are sent.
-  MicroNMEA::sendSentence(gps, "$PORZB");
+  // MicroNMEA::sendSentence(gps, "$PORZB");
 
   // Send only RMC and GGA messages.
-  MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1");
+  // MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1");
 
   // Disable compatability mode (NV08C-CSM proprietary message) and
   // adjust precision of time and position fields
-  MicroNMEA::sendSentence(gps, "$PNVGNME,2,9,1");
+  // MicroNMEA::sendSentence(gps, "$PNVGNME,2,9,1");
   // MicroNMEA::sendSentence(gps, "$PONME,2,4,1,0");
   
   // Trigger a GPS update every Second
-  t.every(1000, ppsHandler);
+  tConsole.attach(1, ppsHandler);
 
   // Print to the Console every 5 seconds
-  t.every(5000, printConsole);
+  tGPSUpdate.attach(5, printConsole);
+
+  // TODO: Print to web clients every X seconds
+  
 }
 
 void loop(void)
@@ -90,5 +97,4 @@ void loop(void)
 //    console.print(c);
     nmea.process(c);
   }
-  t.update();
 }
