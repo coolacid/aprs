@@ -1,60 +1,103 @@
-void printNEMA(void)
+void printConsole(void)
 {
-    // Output GPS information from previous second
-    console.print("Valid fix: ");
-    console.println(nmea.isValid() ? "yes" : "no");
+  if (gps.location.isUpdated())
+  {
+    console.print(F("LOCATION   Fix Age="));
+    console.print(gps.location.age());
+    console.print(F("ms Raw Lat="));
+    console.print(gps.location.rawLat().negative ? "-" : "+");
+    console.print(gps.location.rawLat().deg);
+    console.print("[+");
+    console.print(gps.location.rawLat().billionths);
+    console.print(F(" billionths],  Raw Long="));
+    console.print(gps.location.rawLng().negative ? "-" : "+");
+    console.print(gps.location.rawLng().deg);
+    console.print("[+");
+    console.print(gps.location.rawLng().billionths);
+    console.print(F(" billionths],  Lat="));
+    console.print(gps.location.lat(), 6);
+    console.print(F(" Long="));
+    console.println(gps.location.lng(), 6);
+  }
 
-    console.print("Nav. system: ");
-    if (nmea.getNavSystem())
-      console.println(nmea.getNavSystem());
-    else
-      console.println("none");
+  if (gps.date.isUpdated())
+  {
+    console.print(F("DATE       Fix Age="));
+    console.print(gps.date.age());
+    console.print(F("ms Raw="));
+    console.print(gps.date.value());
+    console.print(F(" Year="));
+    console.print(gps.date.year());
+    console.print(F(" Month="));
+    console.print(gps.date.month());
+    console.print(F(" Day="));
+    console.println(gps.date.day());
+  }
 
-    console.print("Num. satellites: ");
-    console.println(nmea.getNumSatellites());
+  if (gps.time.isUpdated())
+  {
+    console.print(F("TIME       Fix Age="));
+    console.print(gps.time.age());
+    console.print(F("ms Raw="));
+    console.print(gps.time.value());
+    console.print(F(" Hour="));
+    console.print(gps.time.hour());
+    console.print(F(" Minute="));
+    console.print(gps.time.minute());
+    console.print(F(" Second="));
+    console.print(gps.time.second());
+    console.print(F(" Hundredths="));
+    console.println(gps.time.centisecond());
+  }
 
-    console.print("HDOP: ");
-    console.println(nmea.getHDOP()/10., 1);
-    
-    console.print("Date/time: ");
-    console.print(nmea.getYear());
-    console.print('-');
-    console.print(int(nmea.getMonth()));
-    console.print('-');
-    console.print(int(nmea.getDay()));
-    console.print('T');
-    console.print(int(nmea.getHour()));
-    console.print(':');
-    console.print(int(nmea.getMinute()));
-    console.print(':');
-    console.println(int(nmea.getSecond()));
+  if (gps.speed.isUpdated())
+  {
+    console.print(F("SPEED      Fix Age="));
+    console.print(gps.speed.age());
+    console.print(F("ms Raw="));
+    console.print(gps.speed.value());
+    console.print(F(" Knots="));
+    console.print(gps.speed.knots());
+    console.print(F(" MPH="));
+    console.print(gps.speed.mph());
+    console.print(F(" m/s="));
+    console.print(gps.speed.mps());
+    console.print(F(" km/h="));
+    console.println(gps.speed.kmph());
+  }
 
-    long latitude_mdeg = nmea.getLatitude();
-    long longitude_mdeg = nmea.getLongitude();
-    console.print("Latitude (deg): ");
-    console.println(latitude_mdeg / 1000000., 6);
+  if (gps.course.isUpdated())
+  {
+    console.print(F("COURSE     Fix Age="));
+    console.print(gps.course.age());
+    console.print(F("ms Raw="));
+    console.print(gps.course.value());
+    console.print(F(" Deg="));
+    console.println(gps.course.deg());
+  }
 
-    console.print("Longitude (deg): ");
-    console.println(longitude_mdeg / 1000000., 6);
+  if (gps.altitude.isUpdated())
+  {
+    console.print(F("ALTITUDE   Fix Age="));
+    console.print(gps.altitude.age());
+    console.print(F("ms Raw="));
+    console.print(gps.altitude.value());
+    console.print(F(" Meters="));
+    console.print(gps.altitude.meters());
+    console.print(F(" Miles="));
+    console.print(gps.altitude.miles());
+    console.print(F(" KM="));
+    console.print(gps.altitude.kilometers());
+    console.print(F(" Feet="));
+    console.println(gps.altitude.feet());
+  }
 
-    console.print("Latitude: ");
-    console.print(nmea.getMinLatitude());
-    console.println(nmea.getDirLat());
-    console.print("Longitude: ");
-    console.print(nmea.getMinLongitude());
-    console.println(nmea.getDirLong());
-
-    long alt;
-    console.print("Altitude (m): ");
-    if (nmea.getAltitude(alt))
-      console.println(alt / 1000., 3);
-    else
-      console.println("not available");
-
-    console.print("Speed: ");
-    console.println(nmea.getSpeed() / 1000., 3);
-    console.print("Course: ");
-    console.println(nmea.getCourse() / 1000., 3);
-    console.println("-----------------------");    
+  if (gps.satellites.isUpdated())
+  {
+    console.print(F("SATELLITES Fix Age="));
+    console.print(gps.satellites.age());
+    console.print(F("ms Value="));
+    console.println(gps.satellites.value());
+  }
 }
 

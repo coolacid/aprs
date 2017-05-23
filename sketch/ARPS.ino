@@ -8,40 +8,31 @@
 // Speed = Speed in Knots (%03d)
 // ALT = Altitude in feet (%06ld)
 
-float meters_to_feet(float m)
-{
-  // 10000 ft = 3048 m
-  return m / 0.3048;
-}
-
-void printConsole(void)
+void printAPRS(void)
 {    
-  long alt;
   char buffer[255];
   char *comment = "Comment";
-  char gpslat[8], gpslong[9];
-  
-  if (nmea.getAltitude(alt))
-    alt = (int)(meters_to_feet(alt / 1000) + 0.5);
-  else
-    alt = 0;
+  char RawStringLat[8], RawStringLong[9];
 
-  snprintf(gpslat, 8, "%s", nmea.getMinLatitude());
-  snprintf(gpslong, 9, "%s", nmea.getMinLongitude());
+  strncpy(RawStringLat, RawLat.value(), 7);
+  RawStringLat[7]= '\0';
 
-  snprintf(buffer, sizeof(buffer),"/%02d%02d%02dh%7s%c/%8s%c%s%03d/%03d/A=%06ld ", 
-      int(nmea.getDay()), 
-      int(nmea.getHour()), 
-      int(nmea.getMinute()), 
-      gpslat,
-      nmea.getDirLat(),
-      gpslong,
-      nmea.getDirLong(),
+  strncpy(RawStringLong, RawLong.value(), 8);
+  RawStringLong[8]= '\0';
+
+  snprintf(buffer, sizeof(buffer),"/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d ",
+      int(gps.date.day()),
+      int(gps.time.hour()),
+      int(gps.time.minute()),
+      RawStringLat,
+      RawLatDir.value(),
+      RawStringLong,
+      RawLongDir.value(),
       "s", 
-      (int)((nmea.getCourse() / 1000.) + .5), 
-      (int)((nmea.getSpeed() / 1000.) + .5), 
-      alt,
-      comment
+      (int)gps.course.deg(),
+      (int)gps.speed.knots(),
+      (int)gps.altitude.feet()
       );
   console.println(buffer);
 }
+
