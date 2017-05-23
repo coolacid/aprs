@@ -10,17 +10,22 @@
 
 void printAPRS(void)
 {    
+  char CallSign[] = "VE3YCA-4";
+  char Comment[] = "Comment";
+
   char APRSMessage[255];
-  GenAPRS(APRSMessage);
+ 
+  GenAPRS(APRSMessage, CallSign, Comment);
 
   console.println(APRSMessage);
 }
 
-void GenAPRS(char *dest)
+void GenAPRS(char *dest, char *CallSign, char *Comment)
 {
   char buffer[255];
-  char *comment = "Comment";
   char RawStringLat[8], RawStringLong[9];
+
+  char OurDest[] = "APCA01";
 
   strncpy(RawStringLat, RawLat.value(), 7);
   RawStringLat[7]= '\0';
@@ -28,7 +33,9 @@ void GenAPRS(char *dest)
   strncpy(RawStringLong, RawLong.value(), 8);
   RawStringLong[8]= '\0';
 
-  snprintf(buffer, sizeof(buffer),"/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d ",
+  snprintf(buffer, sizeof(buffer),"%s>%s:/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d/%s",
+      CallSign,
+      OurDest,
       int(gps.date.day()),
       int(gps.time.hour()),
       int(gps.time.minute()),
@@ -39,7 +46,8 @@ void GenAPRS(char *dest)
       "s", 
       (int)gps.course.deg(),
       (int)gps.speed.knots(),
-      (int)gps.altitude.feet()
+      (int)gps.altitude.feet(),
+      Comment
       );
   strcpy(dest, buffer);
 }
