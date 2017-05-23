@@ -11,7 +11,6 @@ TinyGPSCustom RawLatDir(gps, "GPGGA", 3);
 TinyGPSCustom RawLong(gps, "GPGGA", 4);
 TinyGPSCustom RawLongDir(gps, "GPGGA", 5);
 
-
 Ticker tPrintConsole;
 Ticker tPrintAPRS;
 Ticker tGPSUpdate;
@@ -28,8 +27,6 @@ void gpsHardwareReset()
   // Empty input buffer
   while (ss_gps.available())
     ss_gps.read();
-
-  delay(50);
 }
 
 void setup() {
@@ -38,8 +35,6 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-
-  Serial.println("Goodnight moon!");
 
   // set the data rate for the SoftwareSerial port
   ss_gps.begin(9600);
