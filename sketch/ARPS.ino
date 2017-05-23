@@ -10,6 +10,14 @@
 
 void printAPRS(void)
 {    
+  char APRSMessage[255];
+  GenAPRS(APRSMessage);
+
+  console.println(APRSMessage);
+}
+
+void GenAPRS(char *dest)
+{
   char buffer[255];
   char *comment = "Comment";
   char RawStringLat[8], RawStringLong[9];
@@ -33,6 +41,6 @@ void printAPRS(void)
       (int)gps.speed.knots(),
       (int)gps.altitude.feet()
       );
-  console.println(buffer);
+  strcpy(dest, buffer);
 }
 
