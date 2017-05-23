@@ -2,9 +2,6 @@
 #include <TinyGPS++.h>
 #include <Ticker.h>
 
-// Libraries
-// https://github.com/stevemarple/MicroNMEA
-
 SoftwareSerial ss_gps(D3, D2); // RX, TX
 HardwareSerial& console = Serial;
 
