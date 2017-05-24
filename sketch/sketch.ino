@@ -1,6 +1,23 @@
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 #include <Ticker.h>
+#include <ESP8266WiFi.h>
+#include <DNSServer.h>
+#include <ESP8266WebServer.h>
+
+//////////////////////
+// WiFi Definitions //
+//////////////////////
+const char WiFiAPPSK[] = "sparkfun";
+const char WiFiSSID[] = "findme-aprs";
+const char DNS_Name[] = "configure.me";
+const byte DNS_Port = 53;
+
+IPAddress apIP(192, 168, 1, 1);
+// WiFiServer server(80);
+ESP8266WebServer webServer(80);
+DNSServer dnsServer;
+
 
 SoftwareSerial ss_gps(D3, D2); // RX, TX
 HardwareSerial& console = Serial;
@@ -31,6 +48,7 @@ void gpsHardwareReset()
 
 void setup() {
   // Open serial communications and wait for port to open:
+//  Serial.setDebugOutput(true);
   Serial.begin(115200);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -43,11 +61,18 @@ void setup() {
   gpsHardwareReset();
   console.println("... done");
 
+  console.println("Starting Wifi/Web ...");
+  setupWiFi();
+  SetupWebServer();
+  SetupDNSServer();
+
+  console.println("... done");
+
   // Trigger a GPS update every Second
   tGPSUpdate.attach(1, ppsHandler);
 
   // Print to the Console every 5 seconds
-  tPrintConsole.attach(5, printConsole);
+//  tPrintConsole.attach(5, printConsole);
   tPrintAPRS.attach(5, printAPRS);
 
   // TODO: Print to web clients every X seconds
@@ -56,6 +81,9 @@ void setup() {
 
 void loop(void)
 {
+  dnsServer.processNextRequest();
+  webServer.handleClient();
+  
   if (ppsTriggered) {
     ppsTriggered = false;
     digitalWrite(LED_BUILTIN, gps.location.isValid());
