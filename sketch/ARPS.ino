@@ -25,7 +25,7 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
   char buffer[255];
   char RawStringLat[8], RawStringLong[9];
 
-  char OurDest[] = "APCA01";
+  char OurDest[] = "WIDE1-1, WIDE2-2";
 
   strncpy(RawStringLat, RawLat.value(), 7);
   RawStringLat[7]= '\0';
