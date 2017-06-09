@@ -45,6 +45,35 @@ void recvWithEndMarker() {
         }
     }
 }
+void p(char *fmt, ... ){
+        char buf[128]; // resulting string limited to 128 chars
+        va_list args;
+        va_start (args, fmt );
+        vsnprintf(buf, 128, fmt, args);
+        va_end (args);
+        Serial.print(buf);
+}
+
+void parseHeader(char *headerStr) {
+    char *tok1;
+    char *tok2;
+    char *fromCall = strtok_r(headerStr, ">", &tok1);
+    fromCall = strtok_r(fromCall, "-", &tok2);
+    char *fromCallId = strtok_r(NULL, "-", &tok2);
+    p("From Call: %s ID: %s\n", fromCall, fromCallId);
+    char *toCall = strtok_r(NULL, ",", &tok1);
+    toCall = strtok_r(toCall, "-", &tok2);
+    char *toCallId = strtok_r(NULL, "-", &tok2);
+    p("To Call: %s ID: %s\n", toCall, toCallId);
+    char *pathItem;
+    while ((pathItem = strtok_r(NULL, ",", &tok1)) != NULL) {
+        p("PathItem: %s\n", pathItem);
+        char *pathCall = strtok_r(pathItem, "-", &tok2);
+        char *pathCallId = strtok_r(NULL, "-", &tok2);
+
+        p("\tCall: %s ID: %s\n", pathCall, pathCallId);
+    }
+}
 
 void HandleData() {
     if (newData == true) {
@@ -54,12 +83,14 @@ void HandleData() {
           Serial.print("Control Code: ");
           Serial.println(receivedChars);
         } else {
-          char* path = strtok(receivedChars, ":");
-          char* message = strtok(0, ":");
+          char *header = strtok(receivedChars, ":");
+          char *message = strtok(0, ":");
+
+          
           Serial.print("Sending: ");
           Serial.println(message);
           Serial.print("To: ");
-          Serial.println(path);
+       //   Serial.println(path);
           
           const struct s_address addresses[] = {
             {D_CALLSIGN, D_CALLSIGN_ID},  // Destination callsign
