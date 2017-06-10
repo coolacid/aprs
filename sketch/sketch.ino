@@ -18,8 +18,9 @@ IPAddress apIP(192, 168, 1, 1);
 ESP8266WebServer webServer(80);
 DNSServer dnsServer;
 
-
 SoftwareSerial ss_gps(D3, D2); // RX, TX
+SoftwareSerial ss_radio(D5, D6); //RX, TX
+
 HardwareSerial& console = Serial;
 
 TinyGPSPlus gps;
@@ -33,6 +34,9 @@ Ticker tPrintAPRS;
 Ticker tGPSUpdate;
 
 volatile bool ppsTriggered = false;
+
+bool newRadioData = false;
+
 
 void ppsHandler(void)
 {
@@ -56,6 +60,7 @@ void setup() {
 
   // set the data rate for the SoftwareSerial port
   ss_gps.begin(9600);
+  ss_radio.begin(9600);
 
   console.println("Resetting GPS module ...");
   gpsHardwareReset();
@@ -81,6 +86,9 @@ void setup() {
 
 void loop(void)
 {
+  char rc;
+  char endMarker = '\n';
+
   dnsServer.processNextRequest();
   webServer.handleClient();
   
@@ -91,5 +99,19 @@ void loop(void)
 
   while (!ppsTriggered && ss_gps.available()) {
     gps.encode(ss_gps.read());
+  }
+
+  if (ss_radio.available()) {
+    newRadioData = false;
+    console.print("RADIO: ");
+    while (newRadioData == false) {
+      if (ss_radio.available()) {
+        rc = ss_radio.read();
+        console.write(rc);
+        if (rc == endMarker) {
+          newRadioData = true;
+        }
+      }
+    }
   }
 }
