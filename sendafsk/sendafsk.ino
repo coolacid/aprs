@@ -19,8 +19,8 @@ char receivedChars[numChars];   // an array to store the received data
 boolean newData = false;
 boolean newRadioData = false;
 
-const int RecLED = 13;
-const int StatusLED = 12;
+const int RecLED = 12;
+const int StatusLED = 13;
 const int SquPin = 6;
 
 Timer t;
@@ -75,7 +75,7 @@ void setup_radio() {
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Starting Up");
+    Serial.println(F("Starting Up"));
     // Set Pin StatusLED for Status LED
     pinMode(StatusLED, OUTPUT);
     // Set Pin RecLED for Rec LED
@@ -90,7 +90,7 @@ void setup() {
     delay(1000);
 #endif
     afsk_setup();
-    Serial.println("<Arduino is ready>");
+    Serial.println(F("<Arduino is ready>"));
     // We're done booting, so we can turn off the LEDs
     digitalWrite(StatusLED,LOW);
     digitalWrite(RecLED,LOW);
@@ -105,7 +105,7 @@ void loop() {
     if (buttonState != lastButtonState) {
       lastButtonState = buttonState;
       if (buttonState == 0) {
-        Serial.println("Receiving");
+        Serial.println(F("Receiving"));
         // Set Rec LED on
         digitalWrite(RecLED,HIGH);
       } else {
@@ -170,17 +170,17 @@ void parseHeader(char *headerStr) {
 
 void HandleData() {
     if (newData == true) {
-        Serial.print("First Char: ");
+        Serial.print(F("First Char: "));
         Serial.println(receivedChars[0]);
         if (receivedChars[0] == '+') {
-          Serial.print("Control Code: ");
+          Serial.print(F("Control Code: "));
           Serial.println(receivedChars);
         } else {
           char* path = strtok(receivedChars, ":");
           char* message = strtok(0, ":");
-          Serial.print("Sending: ");
+          Serial.print(F("Sending: "));
           Serial.println(message);
-          Serial.print("To: ");
+          Serial.print(F("To: "));
           Serial.println(path);
           
           const struct s_address addresses[] = {
