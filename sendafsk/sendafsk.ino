@@ -2,13 +2,18 @@
 // Some code from:
 // http://forum.arduino.cc/index.php?topic=396450
 // 
+
+// Debug Mode for when we're in the Arduino Board without the radio connected
+#define DEBUG true
+
 #include "config.h"
 #include "ax25.h"
 #include "afsk_avr.h"
 #include "afsk_pic32.h"
 #include <SoftwareSerial.h>
+#include "Timer.h"
 
-const byte numChars = 255;
+const byte numChars = 100;
 char receivedChars[numChars];   // an array to store the received data
 
 boolean newData = false;
@@ -18,21 +23,14 @@ const int RecLED = 13;
 const int StatusLED = 12;
 const int SquPin = 6;
 
+Timer t;
+
 int buttonState = 0;
 int lastButtonState = 0;
 
 SoftwareSerial RadioSerial(10, 11); // RX, TX
 
 void setup_radio() {
-  Serial.println("Starting Up");
-  // Set Pin StatusLED for Status LED
-  pinMode(StatusLED, OUTPUT);
-  // Set Pin RecLED for Rec LED
-  pinMode(RecLED, OUTPUT);
-  // Set Status and Receive LED to Solid to signify bootup
-  digitalWrite(StatusLED,HIGH);
-  digitalWrite(RecLED,HIGH);
-
   // Setup the Radio
   char rc;
   char endMarker = '\n';
@@ -72,20 +70,35 @@ void setup_radio() {
       }
     }
   }
-  // We're done booting, so we can turn off the LEDs
-  digitalWrite(StatusLED,LOW);
-  digitalWrite(RecLED,LOW);
+
 }
 
 void setup() {
     Serial.begin(9600);
+    Serial.println("Starting Up");
+    // Set Pin StatusLED for Status LED
+    pinMode(StatusLED, OUTPUT);
+    // Set Pin RecLED for Rec LED
+    pinMode(RecLED, OUTPUT);
+    // Set Status and Receive LED to Solid to signify bootup
+    digitalWrite(StatusLED,HIGH);
+    digitalWrite(RecLED,HIGH);
     pinMode(SquPin, INPUT);
+#ifndef DEBUG
     setup_radio();
+#else
+    delay(1000);
+#endif
     afsk_setup();
     Serial.println("<Arduino is ready>");
+    // We're done booting, so we can turn off the LEDs
+    digitalWrite(StatusLED,LOW);
+    digitalWrite(RecLED,LOW);
+    t.oscillate(StatusLED, 1000, LOW);
 }
 
 void loop() {
+    t.update();
     recvWithEndMarker();
     HandleData();
     buttonState = digitalRead(SquPin);
