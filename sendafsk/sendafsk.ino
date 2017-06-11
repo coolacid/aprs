@@ -170,10 +170,8 @@ void parseHeader(char *headerStr) {
 
 void HandleData() {
     if (newData == true) {
-        Serial.print(F("First Char: "));
-        Serial.println(receivedChars[0]);
-        if (receivedChars[0] == '+') {
-          Serial.print(F("Control Code: "));
+        if (receivedChars[0] == 'A' && receivedChars[1] == 'T' && receivedChars[2] == '+') {
+          Serial.print(F("Transceiver Control Code: "));
           Serial.println(receivedChars);
         } else {
           char* path = strtok(receivedChars, ":");
