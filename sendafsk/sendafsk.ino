@@ -14,17 +14,28 @@ char receivedChars[numChars];   // an array to store the received data
 boolean newData = false;
 boolean newRadioData = false;
 
+const int RecLED = 13;
+const int StatusLED = 12;
 const int SquPin = 6;
+
 int buttonState = 0;
 int lastButtonState = 0;
 
 SoftwareSerial RadioSerial(10, 11); // RX, TX
 
 void setup_radio() {
-// Setup the Radio
+  Serial.println("Starting Up");
+  // Set Pin StatusLED for Status LED
+  pinMode(StatusLED, OUTPUT);
+  // Set Pin RecLED for Rec LED
+  pinMode(RecLED, OUTPUT);
+  // Set Status and Receive LED to Solid to signify bootup
+  digitalWrite(StatusLED,HIGH);
+  digitalWrite(RecLED,HIGH);
+
+  // Setup the Radio
   char rc;
   char endMarker = '\n';
-
   Serial.println("Radio Setup");
   RadioSerial.begin(9600);
   RadioSerial.print("AT+DMOCONNECT\r\n");
@@ -61,6 +72,9 @@ void setup_radio() {
       }
     }
   }
+  // We're done booting, so we can turn off the LEDs
+  digitalWrite(StatusLED,LOW);
+  digitalWrite(RecLED,LOW);
 }
 
 void setup() {
@@ -79,6 +93,11 @@ void loop() {
       lastButtonState = buttonState;
       if (buttonState == 0) {
         Serial.println("Receiving");
+        // Set Rec LED on
+        digitalWrite(RecLED,HIGH);
+      } else {
+        // Set Rec LED off
+        digitalWrite(RecLED,LOW);
       }
     }
 }
