@@ -13,28 +13,27 @@
 #include <SoftwareSerial.h>
 #include "Timer.h"
 
-const byte numChars = 100;
-char receivedChars[numChars];   // an array to store the received data
-
-boolean newData = false;
-boolean newRadioData = false;
-
-const int RecLED = 12;
-const int StatusLED = 13;
-const int SquPin = 6;
+const int RecLED = 12;          // The receive LED pin
+const int StatusLED = 13;       // The Status LED pin
+const int SquPin = 6;           // The Squeltch detect pin from radio
 
 Timer t;
 
-int buttonState = 0;
-int lastButtonState = 0;
+const byte numChars = 100;
+char receivedChars[numChars];   // an array to store the received data
+
+bool newData = false;
+bool buttonState = 0;
+bool lastButtonState = 0;
 
 SoftwareSerial RadioSerial(10, 11); // RX, TX
 
 void setup_radio() {
   // Setup the Radio
+  const char endMarker = '\n';
+  bool newRadioData = false;
   char rc;
-  char endMarker = '\n';
-  Serial.println("Radio Setup");
+  Serial.println(F("Radio Setup"));
   RadioSerial.begin(9600);
   RadioSerial.print("AT+DMOCONNECT\r\n");
   newRadioData = false;
@@ -59,7 +58,7 @@ void setup_radio() {
       }
     }
   }
-  RadioSerial.print("AT+SETFILTER=1,1,1\r\n");
+  RadioSerial.print("AT+SETFILTER=0,0,0\r\n");
   newRadioData = false;
   while (newRadioData == false) {
     if (RadioSerial.available()) {
@@ -70,7 +69,6 @@ void setup_radio() {
       }
     }
   }
-
 }
 
 void setup() {
@@ -117,7 +115,7 @@ void loop() {
 
 void recvWithEndMarker() {
     static byte ndx = 0;
-    char endMarker = '\n';
+    const char endMarker = '\n';
     char rc;
     
     while (Serial.available() && newData == false) {
@@ -173,6 +171,7 @@ void HandleData() {
         if (receivedChars[0] == 'A' && receivedChars[1] == 'T' && receivedChars[2] == '+') {
           Serial.print(F("Transceiver Control Code: "));
           Serial.println(receivedChars);
+          // TODO: Send the control command on to the transceiver
         } else {
           char* path = strtok(receivedChars, ":");
           char* message = strtok(0, ":");
