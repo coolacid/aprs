@@ -1,38 +1,6 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-// The APRS config will be removed when the APRS Addresses are parsed properly
-// For now, we'll just leave these here. 
-
-// --------------------------------------------------------------------------
-// APRS config (aprs.c)
-// --------------------------------------------------------------------------
-
-// Set your callsign and SSID here. Common values for the SSID are
-// (from http://zlhams.wikidot.com/aprs-ssidguide):
-//
-// - Balloons:  11
-// - Cars:       9
-// - Home:       0
-// - IGate:      5
-#define S_CALLSIGN      "VE3YCA"
-#define S_CALLSIGN_ID   11
-
-// Destination callsign: APRS (with SSID=0) is usually okay.
-#define D_CALLSIGN      "APRS"
-#define D_CALLSIGN_ID   0
-
-// Digipeating paths:
-// (read more about digipeating paths here: http://wa8lmf.net/DigiPaths/ )
-// The recommended digi path for a balloon is WIDE2-1 or pathless. The default
-// is pathless. Uncomment the following two lines for WIDE2-1 path:
-#define DIGI_PATH1      "RELAY"
-#define DIGI_PATH1_TTL  1
-
-#define DIGI_PATH2      "WIDE2"
-#define DIGI_PATH2_TTL  1
-
-
 // --------------------------------------------------------------------------
 // AX.25 config (ax25.cpp)
 // --------------------------------------------------------------------------

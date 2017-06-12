@@ -145,9 +145,10 @@ void p(char *fmt, ... ){
         Serial.print(buf);
 }
 
-void parseHeader(char *headerStr, struct s_address *addresses) {
+int parseHeader(char *headerStr, struct s_address *addresses) {
     char *tok1;
     char *tok2;
+    int pathnum = 0;
     char *fromCall = strtok_r(headerStr, ">", &tok1);
     fromCall = strtok_r(fromCall, "-", &tok2);
     char *fromCallId = strtok_r(NULL, "-", &tok2);
@@ -163,17 +164,24 @@ void parseHeader(char *headerStr, struct s_address *addresses) {
     addresses[0].ssid = atoi(toCallId);
 
     char *pathItem;
-    while ((pathItem = strtok_r(NULL, ",", &tok1)) != NULL) {
+    while ((pathItem = strtok_r(NULL, ",", &tok1)) != NULL and pathnum < 4) {
+        pathnum++;
         p("PathItem: %s\n", pathItem);
         char *pathCall = strtok_r(pathItem, "-", &tok2);
         char *pathCallId = strtok_r(NULL, "-", &tok2);
 
         p("\tCall: %s ID: %s\n", pathCall, pathCallId);
+        strncpy(addresses[pathnum+1].callsign, pathCall, 7);
+        addresses[pathnum+1].ssid = atoi(pathCallId);
+
     }
+    p("Number of Addresses: %d\n", pathnum+2);
+    return pathnum+2;
 }
 
 void HandleData() {
-    struct s_address addresses[2];
+    struct s_address addresses[6];
+    int numaddresses;
     if (newData == true) {
         if (receivedChars[0] == 'A' && receivedChars[1] == 'T' && receivedChars[2] == '+') {
           Serial.print(F("Transceiver Control Code: "));
@@ -181,25 +189,12 @@ void HandleData() {
           // TODO: Send the control command on to the transceiver
         } else {
           char* path = strtok(receivedChars, ":");
-          char* message = strtok(0, ":");
-          parseHeader(path, addresses);
+          char* message = strtok(NULL, ":");
+          numaddresses = parseHeader(path, addresses);
           Serial.print(F("Sending: "));
           Serial.println(message);
-          Serial.print(F("To: "));
-          Serial.println(path);
-          
-//          const struct s_address addresses[] = {
-//            {D_CALLSIGN, D_CALLSIGN_ID},  // Destination callsign
-//            {S_CALLSIGN, S_CALLSIGN_ID},  // Source callsign (-11 = balloon, -9 = car)
-//            #ifdef DIGI_PATH1
-//            {DIGI_PATH1, DIGI_PATH1_TTL}, // Digi1 (first digi in the chain)
-//            #endif
-//            #ifdef DIGI_PATH2
-//            {DIGI_PATH2, DIGI_PATH2_TTL}, // Digi2 (second digi in the chain)
-//            #endif
-//          };
   
-           ax25_send_header(addresses, sizeof(addresses)/sizeof(s_address));
+           ax25_send_header(addresses, numaddresses);
 
            ax25_send_string(message);
            ax25_send_footer();
