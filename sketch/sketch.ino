@@ -22,8 +22,8 @@ DNSServer dnsServer;
 
 const int RadioRst = D1;
 
-SoftwareSerial ss_gps(D5, D6); // RX, TX
-SoftwareSerial ss_radio(D3, D2); //RX, TX
+SoftwareSerial ss_gps(D6, D7, false, 256); // RX, TX
+SoftwareSerial ss_radio(D3, D2, false, 256); //RX, TX
 
 HardwareSerial& console = Serial;
 
