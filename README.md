@@ -1,6 +1,11 @@
 # aprs
 Mini-APRS Transmitter
 
+(Note alot of these notes are now VERY wrong -- I'll update these later)
+
+sendafsk - Arduino Sketch that takes a serial APRS message and transmits it - Also, will take DRA818V commands and pass them on. 
+sketch - (Needs to be renamed) 8266 Sketch that Interfaces the GPS and sendafsk with a handy Wifi front-end. 
+
 This project is combining a bunch of pieces together to greate a small 1w APRS transmitter. This can be connected to an external RF AMP for extended coverage. 
 
 # Using ESP12E Devkit as Arduino
