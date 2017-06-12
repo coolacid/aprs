@@ -5,6 +5,8 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 
+#define DEBUG
+
 //////////////////////
 // WiFi Definitions //
 //////////////////////
@@ -20,8 +22,8 @@ DNSServer dnsServer;
 
 const int RadioRst = D1;
 
-SoftwareSerial ss_gps(D3, D2); // RX, TX
-SoftwareSerial ss_radio(D5, D6); //RX, TX
+SoftwareSerial ss_gps(D5, D6); // RX, TX
+SoftwareSerial ss_radio(D3, D2); //RX, TX
 
 HardwareSerial& console = Serial;
 
@@ -49,7 +51,7 @@ void gpsHardwareReset()
 {
   // Empty input buffer
   while (ss_gps.available())
-    ss_gps.read();
+    console.write(ss_gps.read());
 }
 
 void setup() {
@@ -86,7 +88,7 @@ void setup() {
 
   // Print to the Console every 5 seconds
 //  tPrintConsole.attach(5, printConsole);
-  tPrintAPRS.attach(5, printAPRS);
+  tPrintAPRS.attach(30, printAPRS);
 
   // TODO: Print to web clients every X seconds
 }
@@ -104,7 +106,7 @@ void loop(void)
     digitalWrite(LED_BUILTIN, gps.location.isValid());
   }
 
-  while (!ppsTriggered && ss_gps.available()) {
+  while (ss_gps.available()) {
     gps.encode(ss_gps.read());
   }
 

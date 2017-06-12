@@ -11,7 +11,7 @@
 void printAPRS(void)
 {    
   char CallSign[] = "VE3YCA-4";
-  char Comment[] = "Comment";
+  char Comment[] = "Testing";
 
   char APRSMessage[100];
  
@@ -22,6 +22,8 @@ void printAPRS(void)
   } else {
     console.print("APRSMessage: ");
     console.println(APRSMessage);
+    ss_radio.write(APRSMessage);
+    ss_radio.write('\n');
   }
 }
 
@@ -32,16 +34,16 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
 
   char OurDest[] = "APRS,WIDE1-1,WIDE2-2";
 
+  if (strlen(RawLong.value()) == 0 or strlen(RawLat.value()) == 0) {
+    dest[0] = '\0';
+    return;
+  }
+
   strncpy(RawStringLat, RawLat.value(), 7);
   RawStringLat[7]= '\0';
 
   strncpy(RawStringLong, RawLong.value(), 8);
   RawStringLong[8]= '\0';
-
-  if (strlen(RawLong.value()) == 0 or strlen(RawLat.value()) == 0 or not gps.time.isUpdated()) {
-    dest[0] = '\0';
-    return;
-  }
 
   snprintf(buffer, sizeof(buffer),"%s>%s:/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d/%s",
       CallSign,
