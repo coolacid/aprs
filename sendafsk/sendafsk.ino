@@ -4,7 +4,7 @@
 // 
 
 // Debug Mode for when we're in the Arduino Board without the radio connected
-#define DEBUG true
+// #define DEBUG
 
 #include "config.h"
 #include "ax25.h"

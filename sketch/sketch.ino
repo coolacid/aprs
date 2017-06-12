@@ -18,6 +18,8 @@ IPAddress apIP(192, 168, 1, 1);
 ESP8266WebServer webServer(80);
 DNSServer dnsServer;
 
+const int RadioRst = D1;
+
 SoftwareSerial ss_gps(D3, D2); // RX, TX
 SoftwareSerial ss_radio(D5, D6); //RX, TX
 
@@ -58,6 +60,12 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+  pinMode(RadioRst, OUTPUT);
+  console.println("Resetting Radio ...");
+  digitalWrite(RadioRst, LOW);
+  delay (100);
+  digitalWrite(RadioRst, HIGH);
+  console.println("... done");
   // set the data rate for the SoftwareSerial port
   ss_gps.begin(9600);
   ss_radio.begin(9600);
