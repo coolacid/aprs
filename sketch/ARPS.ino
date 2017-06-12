@@ -13,11 +13,16 @@ void printAPRS(void)
   char CallSign[] = "VE3YCA-4";
   char Comment[] = "Comment";
 
-  char APRSMessage[255];
+  char APRSMessage[100];
  
   GenAPRS(APRSMessage, CallSign, Comment);
 
-  console.println(APRSMessage);
+  if (APRSMessage[0] == '\0') {
+    console.println("No GPS Fix");
+  } else {
+    console.print("APRSMessage: ");
+    console.println(APRSMessage);
+  }
 }
 
 void GenAPRS(char *dest, char *CallSign, char *Comment)
@@ -32,6 +37,11 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
 
   strncpy(RawStringLong, RawLong.value(), 8);
   RawStringLong[8]= '\0';
+
+  if (strlen(RawLong.value()) == 0 or strlen(RawLat.value()) == 0 or not gps.time.isUpdated()) {
+    dest[0] = '\0';
+    return;
+  }
 
   snprintf(buffer, sizeof(buffer),"%s>%s:/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d/%s",
       CallSign,

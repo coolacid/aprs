@@ -89,7 +89,6 @@ void setup() {
   tPrintAPRS.attach(5, printAPRS);
 
   // TODO: Print to web clients every X seconds
-
 }
 
 void loop(void)
