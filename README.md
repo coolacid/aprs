@@ -47,3 +47,7 @@ Current issue is getting AFSK working on the ESP8266 (ESP12E). This is a list of
 Ones that use a specific modem board:
 - https://github.com/kicksat/ax25 ( HopeRF Board)
 - https://github.com/markqvist/MicroModem ( Micromodem )
+
+# APRS Nodes:
+- q Codes in a path: http://www.aprs-is.net/q.aspx
+- DIGI Paths: http://wa8lmf.net/DigiPaths/
