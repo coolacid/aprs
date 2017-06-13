@@ -51,3 +51,7 @@ Ones that use a specific modem board:
 # APRS Nodes:
 - q Codes in a path: http://www.aprs-is.net/q.aspx
 - DIGI Paths: http://wa8lmf.net/DigiPaths/
+
+# Notes for Rev2
+- https://deeplyembedded.wordpress.com/2016/11/21/esp8266_spi/
+
