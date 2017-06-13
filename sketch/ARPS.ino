@@ -32,7 +32,7 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
   char buffer[255];
   char RawStringLat[8], RawStringLong[9];
 
-  char OurDest[] = "APRS,WIDE1-1,WIDE2-2";
+  char OurDest[] = "APLSR1,RELAY,WIDE1-1,WIDE2-2";
 
   if (strlen(RawLong.value()) == 0 or strlen(RawLat.value()) == 0) {
     dest[0] = '\0';
