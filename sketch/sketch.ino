@@ -107,7 +107,13 @@ void loop(void)
   }
 
   while (ss_gps.available()) {
+#ifdef DEBUG
+    rc = ss_gps.read();
+    console.write(rc);
+    gps.encode(rc);
+#else
     gps.encode(ss_gps.read());
+#endif
   }
 
   if (ss_radio.available()) {
