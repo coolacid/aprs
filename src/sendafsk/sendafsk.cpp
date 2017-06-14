@@ -5,11 +5,14 @@
 // Debug Mode for when we're in the Arduino Board without the radio connected
 // #define DEBUG
 
+#include <Arduino.h>
 #include "config.h"
+#include "sendafsk.h"
 #include "ax25.h"
 #include "afsk_avr.h"
 #include "afsk_pic32.h"
 #include <SoftwareSerial.h>
+
 #include "Timer.h"
 
 const int RecLED = 12;          // The receive LED pin
