@@ -1,3 +1,11 @@
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS++.h>
+#include <ESP8266WebServer.h>
+#include <DNSServer.h>
+#include "brains.h"
+#include "WebServer.h"
+
 void WebServer_Root() {
   String message = "Hello World!\n\n";
   message += "URI: ";

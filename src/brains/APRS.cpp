@@ -8,6 +8,12 @@
 // Speed = Speed in Knots (%03d)
 // ALT = Altitude in feet (%06ld)
 
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS++.h>
+#include "brains.h"
+#include "APRS.h"
+
 void printAPRS(void)
 {    
   char CallSign[] = "VE3YCA-4";

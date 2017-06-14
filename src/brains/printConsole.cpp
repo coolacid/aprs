@@ -1,3 +1,8 @@
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS++.h>
+#include "brains.h"
+
 void printConsole(void)
 {
   if (gps.location.isUpdated())

@@ -1,37 +1,33 @@
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 #include <Ticker.h>
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
+#include "brains.h"
+#include "APRS.h"
+#include "printConsole.h"
+#include "WebServer.h"
 
 #define DEBUG
-
-//////////////////////
-// WiFi Definitions //
-//////////////////////
-const char WiFiAPPSK[] = "sparkfun";
-const char WiFiSSID[] = "findme-aprs";
-const char DNS_Name[] = "configure.me";
-const byte DNS_Port = 53;
-
-IPAddress apIP(192, 168, 1, 1);
-// WiFiServer server(80);
-ESP8266WebServer webServer(80);
-DNSServer dnsServer;
-
-const int RadioRst = D1;
 
 SoftwareSerial ss_gps(D6, D7, false, 256); // RX, TX
 SoftwareSerial ss_radio(D2, D3, false, 256); //RX, TX
 
-HardwareSerial& console = Serial;
+IPAddress apIP(192, 168, 1, 1);
+ESP8266WebServer webServer(80);
+DNSServer dnsServer;
 
 TinyGPSPlus gps;
 TinyGPSCustom RawLat(gps, "GPGGA", 2);
 TinyGPSCustom RawLatDir(gps, "GPGGA", 3);
 TinyGPSCustom RawLong(gps, "GPGGA", 4);
 TinyGPSCustom RawLongDir(gps, "GPGGA", 5);
+
+HardwareSerial& console = Serial;
+
+const int RadioRst = D1;
 
 Ticker tPrintConsole;
 Ticker tPrintAPRS;
@@ -40,7 +36,6 @@ Ticker tGPSUpdate;
 volatile bool ppsTriggered = false;
 
 bool newRadioData = false;
-
 
 void ppsHandler(void)
 {
