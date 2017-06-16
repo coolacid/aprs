@@ -5,10 +5,12 @@
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
+#include <ArduinoJson.h>
 #include "brains.h"
 #include "APRS.h"
 #include "printConsole.h"
 #include "WebServer.h"
+#include "FS.h"
 
 #define DEBUG
 
@@ -51,6 +53,44 @@ void gpsHardwareReset()
     console.write(ss_gps.read());
 }
 
+bool readconfig() {
+  File configFile = SPIFFS.open("/config.json", "r");
+  if (!configFile) {
+    Serial.println("Failed to open config file");
+    return false;
+  }
+
+  size_t size = configFile.size();
+  if (size > 1024) {
+    Serial.println("Config file size is too large");
+    return false;
+  }
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+
+  // We don't use String here because ArduinoJson library requires the input
+  // buffer to be mutable. If you don't use ArduinoJson, you may as well
+  // use configFile.readString instead.
+  configFile.readBytes(buf.get(), size);
+
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(buf.get());
+
+  if (!json.success()) {
+    Serial.println("Failed to parse config file");
+    return false;
+  }
+
+  const char* source = json["source"];
+  const char* comment = json["comment"];
+
+  console.print(F("APRS Source: "));
+  console.println(source);
+  console.print(F("APRS Comment: "));
+  console.println(comment);
+
+}
+
 void setup() {
   // Open serial communications and wait for port to open:
 //  Serial.setDebugOutput(true);
@@ -81,6 +121,11 @@ void setup() {
 
   console.println("... done");
 
+  console.println("Init SPIFFS");
+  SPIFFS.begin();
+  readconfig();
+  console.println("... done");
+  
   // Trigger a GPS update every Second
   tGPSUpdate.attach(1, ppsHandler);
 
