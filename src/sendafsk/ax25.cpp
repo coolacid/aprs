@@ -182,9 +182,6 @@ ax25_send_footer()
   
   // Signal the end of frame
   ax25_send_flag();
-#ifdef DEBUG_AX25
-  Serial.println();
-#endif
 }
 
 void

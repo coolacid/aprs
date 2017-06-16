@@ -12,8 +12,9 @@
 #include "afsk_avr.h"
 #include "afsk_pic32.h"
 #include <SoftwareSerial.h>
-
 #include "Timer.h"
+
+// #define VERBOSE                 // Send more data to serial
 
 const int RecLED = 12;          // The receive LED pin
 const int StatusLED = 13;       // The Status LED pin
@@ -25,7 +26,6 @@ const byte numChars = 100;
 char receivedChars[numChars];   // an array to store the received data
 
 bool newData = false;
-bool buttonState = 0;
 bool lastButtonState = 0;
 
 SoftwareSerial RadioSerial(10, 11); // RX, TX
@@ -42,7 +42,9 @@ void setup_radio() {
   while (newRadioData == false) {
     if (RadioSerial.available()) {
       rc = RadioSerial.read();
+#ifdef VERBOSE
       Serial.write(rc);
+#endif
       if (rc == endMarker) {
         newRadioData = true;
       }
@@ -54,7 +56,9 @@ void setup_radio() {
   while (newRadioData == false) {
     if (RadioSerial.available()) {
       rc = RadioSerial.read();
+#ifdef VERBOSE
       Serial.write(rc);
+#endif
       if (rc == endMarker) {
         newRadioData = true;
       }
@@ -65,7 +69,9 @@ void setup_radio() {
   while (newRadioData == false) {
     if (RadioSerial.available()) {
       rc = RadioSerial.read();
+#ifdef VERBOSE
       Serial.write(rc);
+#endif
       if (rc == endMarker) {
         newRadioData = true;
       }
@@ -101,11 +107,13 @@ void loop() {
     t.update();
     recvWithEndMarker();
     HandleData();
-    buttonState = digitalRead(SquPin);
+    bool buttonState = digitalRead(SquPin);
     if (buttonState != lastButtonState) {
       lastButtonState = buttonState;
       if (buttonState == 0) {
+#ifdef VERBOSE
         Serial.println(F("Receiving"));
+#endif
         // Set Rec LED on
         digitalWrite(RecLED,HIGH);
       } else {
@@ -154,30 +162,40 @@ int parseHeader(char *headerStr, struct s_address *addresses) {
     char *fromCall = strtok_r(headerStr, ">", &tok1);
     fromCall = strtok_r(fromCall, "-", &tok2);
     char *fromCallId = strtok_r(NULL, "-", &tok2);
+#ifdef VERBOSE
     p("From Call: %s ID: %s\n", fromCall, fromCallId);
+#endif
     strncpy(addresses[1].callsign, fromCall, 7);
     addresses[1].ssid = atoi(fromCallId);
 
     char *toCall = strtok_r(NULL, ",", &tok1);
     toCall = strtok_r(toCall, "-", &tok2);
     char *toCallId = strtok_r(NULL, "-", &tok2);
+#ifdef VERBOSE
     p("To Call: %s ID: %s\n", toCall, toCallId);
+#endif
     strncpy(addresses[0].callsign, toCall, 7);
     addresses[0].ssid = atoi(toCallId);
 
     char *pathItem;
     while ((pathItem = strtok_r(NULL, ",", &tok1)) != NULL and pathnum < 4) {
         pathnum++;
+#ifdef VERBOSE
         p("PathItem: %s\n", pathItem);
+#endif
         char *pathCall = strtok_r(pathItem, "-", &tok2);
         char *pathCallId = strtok_r(NULL, "-", &tok2);
 
+#ifdef VERBOSE
         p("\tCall: %s ID: %s\n", pathCall, pathCallId);
+#endif
         strncpy(addresses[pathnum+1].callsign, pathCall, 7);
         addresses[pathnum+1].ssid = atoi(pathCallId);
 
     }
+#ifdef VERBOSE
     p("Number of Addresses: %d\n", pathnum+2);
+#endif
     return pathnum+2;
 }
 
@@ -193,9 +211,10 @@ void HandleData() {
           char* path = strtok(receivedChars, ":");
           char* message = strtok(NULL, ":");
           numaddresses = parseHeader(path, addresses);
+#ifdef VERBOSE
           Serial.print(F("Sending: "));
           Serial.println(message);
-  
+#endif  
            ax25_send_header(addresses, numaddresses);
 
            ax25_send_string(message);

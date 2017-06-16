@@ -28,6 +28,8 @@ TinyGPSCustom RawLongDir(gps, "GPGGA", 5);
 HardwareSerial& console = Serial;
 
 const int RadioRst = D1;
+const int RadioRec = D5;
+bool lastButtonState = 0;
 
 Ticker tPrintConsole;
 Ticker tPrintAPRS;
@@ -57,6 +59,7 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+  pinMode(RadioRec, INPUT);
   pinMode(RadioRst, OUTPUT);
   console.println("Resetting Radio ...");
   digitalWrite(RadioRst, LOW);
@@ -109,6 +112,14 @@ void loop(void)
 #else
     gps.encode(ss_gps.read());
 #endif
+  }
+
+  bool buttonState = digitalRead(RadioRec);
+  if (buttonState != lastButtonState) {
+    lastButtonState = buttonState;
+    if (buttonState == 1) {
+      Serial.println(F("Radio is Receiving"));
+    }
   }
 
   if (ss_radio.available()) {
