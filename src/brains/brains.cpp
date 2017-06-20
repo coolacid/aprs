@@ -37,6 +37,8 @@ Ticker tPrintConsole;
 Ticker tPrintAPRS;
 Ticker tGPSUpdate;
 
+stConfig Config;
+
 volatile bool ppsTriggered = false;
 
 bool newRadioData = false;
@@ -81,14 +83,19 @@ bool readconfig() {
     return false;
   }
 
-  const char* source = json["source"];
-  const char* comment = json["comment"];
+  strcpy(Config.CallSign, json["source"]);
+  strcpy(Config.Comment, json["comment"]);
+  strcpy(Config.Path, json["path"]);
+  Config.PingTime = json["pingtime"];
 
   console.print(F("APRS Source: "));
-  console.println(source);
+  console.println(Config.CallSign);
   console.print(F("APRS Comment: "));
-  console.println(comment);
-
+  console.println(Config.Comment);
+  console.print(F("APRS Path: "));
+  console.println(Config.Path);
+  console.print(F("APRS: Ping Time: "));
+  console.println(Config.PingTime);
 }
 
 void setup() {
@@ -131,7 +138,7 @@ void setup() {
 
   // Print to the Console every 5 seconds
 //  tPrintConsole.attach(5, printConsole);
-  tPrintAPRS.attach(30, printAPRS);
+  tPrintAPRS.attach(Config.PingTime, printAPRS);
 
   // TODO: Print to web clients every X seconds
 }

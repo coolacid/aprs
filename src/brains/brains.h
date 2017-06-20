@@ -12,6 +12,17 @@ const char WiFiSSID[] = "findme-aprs";
 const char DNS_Name[] = "configure.me";
 const byte DNS_Port = 53;
 
+const char OurDest[] = "APLSR1";
+
+struct stConfig {
+    char CallSign[9];
+    char Comment[20];  // TODO: Verify These sizes
+    char Path[20];
+    long PingTime;
+};
+
+extern stConfig Config;
+
 extern SoftwareSerial ss_gps;
 extern SoftwareSerial ss_radio;
 

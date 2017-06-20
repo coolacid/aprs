@@ -1,5 +1,6 @@
 {
  "source": "VE3YCA-4",
  "comment": "Testing APRS",
- "pingtime": 30
+ "pingtime": 30,
+ "path": "RELAY,WIDE1-1,WIDE2-2"
 }

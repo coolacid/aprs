@@ -16,12 +16,9 @@
 
 void printAPRS(void)
 {    
-  char CallSign[] = "VE3YCA-4";
-  char Comment[] = "Testing";
-
   char APRSMessage[100];
  
-  GenAPRS(APRSMessage, CallSign, Comment);
+  GenAPRS(APRSMessage);
 
   if (APRSMessage[0] == '\0') {
     console.println("No GPS Fix");
@@ -33,12 +30,10 @@ void printAPRS(void)
   }
 }
 
-void GenAPRS(char *dest, char *CallSign, char *Comment)
+void GenAPRS(char *dest)
 {
   char buffer[255];
   char RawStringLat[8], RawStringLong[9];
-
-  char OurDest[] = "APLSR1,RELAY,WIDE1-1,WIDE2-2";
 
   if (strlen(RawLong.value()) == 0 or strlen(RawLat.value()) == 0) {
     dest[0] = '\0';
@@ -51,9 +46,10 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
   strncpy(RawStringLong, RawLong.value(), 8);
   RawStringLong[8]= '\0';
 
-  snprintf(buffer, sizeof(buffer),"%s>%s:/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d/%s",
-      CallSign,
+  snprintf(buffer, sizeof(buffer),"%s>%s,%s:/%02d%02d%02dh%s%s/%s%s%s%03d/%03d/A=%06d/%s",
+      Config.CallSign,
       OurDest,
+      Config.Path,
       int(gps.date.day()),
       int(gps.time.hour()),
       int(gps.time.minute()),
@@ -65,7 +61,7 @@ void GenAPRS(char *dest, char *CallSign, char *Comment)
       (int)gps.course.deg(),
       (int)gps.speed.knots(),
       (int)gps.altitude.feet(),
-      Comment
+      Config.Comment
       );
   strcpy(dest, buffer);
 }
