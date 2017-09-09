@@ -2,3 +2,4 @@
 .piolibdeps
 .vscode
 Validate/.#*
+.vscode/c_cpp_properties.json
