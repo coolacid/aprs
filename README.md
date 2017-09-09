@@ -55,3 +55,10 @@ Ones that use a specific modem board:
 # Notes for Rev2
 - https://deeplyembedded.wordpress.com/2016/11/21/esp8266_spi/
 
+# building
+
+To build
+`platformio run -e [enviroment:brains/sendafsk]`
+
+To push
+`platformio run -e [enviroment:brains/sendafsk] -t upload`
