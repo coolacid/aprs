@@ -62,3 +62,6 @@ To build
 
 To push
 `platformio run -e [enviroment:brains/sendafsk] -t upload`
+
+Upload config: 
+`platformio run -e brains -t uploadfs`
